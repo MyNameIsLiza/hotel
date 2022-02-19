@@ -1,23 +1,55 @@
 import logo from './logo.svg';
 import './App.css';
+import {useDispatch} from "react-redux";
+import {useEffect} from "react";
+import {getOrders} from "./store/actions/ordersAction";
+import {getClients} from "./store/actions/clientsAction";
+import {getRooms} from "./store/actions/roomsAction";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link
+} from "react-router-dom";
+import Rooms from "./components/Rooms";
+
 
 function App() {
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getOrders());
+    dispatch(getRooms());
+    dispatch(getClients());
+  }, [dispatch]);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/rooms">Rooms</Link>
+            </li>
+            <li>
+              <Link to="/topics">Topics</Link>
+            </li>
+            <li>
+              <Link to="/questions">Questions</Link>
+            </li>
+          </ul>
+        </nav>
+        <Routes>
+          <Route path='/rooms' element={<Rooms/>}/>
+          {/*<Route path="/clients" element={<Clients/>}/>
+          <Route path="/orders" element={<Orders/>}/>*/}
+          <Route path="/">
+
+          </Route>
+        </Routes>
+      </Router>
     </div>
   );
 }
