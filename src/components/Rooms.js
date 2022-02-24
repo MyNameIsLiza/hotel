@@ -7,14 +7,28 @@ import './Rooms.css';
 
 const RoomsContext = createContext({});
 
+function sortByKey(array, key) {
+    console.log('0', array[0][key]);
+    console.log('1', array[1][key]);
+    const direction = array[0][key] < array[1][key] ? 1 : -1;
+    console.log('direction', direction)
+    return array.sort(function(a, b) {
+        const x = a[key];
+        const y = b[key];
+        return ((x < y) ? direction : ((x > y) ? direction * -1 : 0));
+    });
+}
+
 
 export default function Rooms() {
     const rooms = useSelector((store) => store.roomsReducer.rooms);
     const [room, setRoom] = useState({roomNumber: 0, roomType: 'Common', price: 0})
+    const [displayRooms, setDisplayRooms] = useState([]);
 
     useEffect(() => {
         console.log('rooms', rooms);
         setRoom({roomNumber: 0, roomType: 'Common', price: 0});
+        setDisplayRooms([...rooms]);
     }, [rooms])
     return (
         <div className="Rooms">
@@ -23,16 +37,25 @@ export default function Rooms() {
                 <table>
                     <thead>
                     <tr>
-                        <th>Room number</th>
-                        <th>Room type</th>
-                        <th>Room status</th>
-                        <th>Room price</th>
+                        <th onClick={() => {
+                            setDisplayRooms([...sortByKey(displayRooms, 'roomNumber')]);
+                        }}>Room number
+                        </th>
+                        <th onClick={() => {
+                            setDisplayRooms([...sortByKey(displayRooms, 'roomType')]);
+                        }}>Room type</th>
+                        <th onClick={() => {
+                            setDisplayRooms([...sortByKey(displayRooms, 'roomStatus')]);
+                        }}>Room status</th>
+                        <th onClick={() => {
+                            setDisplayRooms([...sortByKey(displayRooms, 'price')]);
+                        }}>Room price</th>
                         <th>Edit</th>
                         <th>Delete</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {rooms.map((item, index) => <RoomTr key={item._id} {...{
+                    {displayRooms.map((item, index) => <RoomTr key={item._id} {...{
                         item
                     }}/>)}
                     </tbody>
