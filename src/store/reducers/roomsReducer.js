@@ -20,13 +20,16 @@ const initialState = {
 };
 
 export default function roomsReducer(state = initialState, action) {
+    const shallowRooms = [...state.rooms];
     switch (action.type) {
         case GET_ROOMS_STARTED:
+            console.log('GET_ROOMS_STARTED', state.rooms);
             return {
                 ...state,
                 loading: true
             };
         case GET_ROOMS_SUCCESS:
+            console.log('GET_ROOMS_SUCCESS', state.rooms);
             return {
                 ...state,
                 loading: false,
@@ -34,17 +37,20 @@ export default function roomsReducer(state = initialState, action) {
                 rooms: [...action.payload]
             };
         case GET_ROOMS_FAILURE:
+            console.log('GET_ROOMS_FAILURE', state.rooms);
             return {
                 ...state,
                 loading: false,
                 error: action.payload.error
             };
         case ADD_ROOM_STARTED:
+            console.log('ADD_ROOM_STARTED', state.rooms);
             return {
                 ...state,
                 loading: true
             };
         case ADD_ROOM_SUCCESS:
+            console.log('ADD_ROOM_SUCCESS', state.rooms);
             return {
                 ...state,
                 loading: false,
@@ -52,47 +58,53 @@ export default function roomsReducer(state = initialState, action) {
                 rooms: [...state.rooms, action.payload]
             };
         case ADD_ROOM_FAILURE:
+            console.log('ADD_ROOM_FAILURE', state.rooms);
             return {
                 ...state,
                 loading: false,
                 error: action.payload.error
             };
         case EDIT_ROOM_STARTED:
+            console.log('EDIT_ROOM_STARTED', state.rooms);
             return {
                 ...state,
                 loading: true
             };
         case EDIT_ROOM_SUCCESS:
-            const index = state.rooms.findIndex((el) => el.id === action.payload.id);
-            state.rooms[index] = {...state.rooms[index], ...action.payload};
+            console.log('EDIT_ROOM_SUCCESS', state.rooms);
+            const index = state.rooms.findIndex((el) => el._id === action.payload._id);
+            shallowRooms[index] = {...shallowRooms[index], ...action.payload};
             return {
                 ...state,
                 loading: false,
                 error: null,
-                rooms: [...state.rooms]
+                rooms: [...shallowRooms]
             };
         case EDIT_ROOM_FAILURE:
+            console.log('EDIT_ROOM_FAILURE', state.rooms);
             return {
                 ...state,
                 loading: false,
                 error: action.payload.error
             };
         case DELETE_ROOM_STARTED:
+            console.log('DELETE_ROOM_STARTED', state.rooms);
             return {
                 ...state,
                 loading: true
             };
         case DELETE_ROOM_SUCCESS:
+            console.log('DELETE_ROOM_SUCCESS', state.rooms);
             const index2 = state.rooms.findIndex((el) => el.id === action.payload.id);
-            const temp = [...state.rooms];
-            temp.splice(index2, 1);
+            shallowRooms.splice(index2, 1);
             return {
                 ...state,
                 loading: false,
                 error: null,
-                rooms: [...temp]
+                rooms: [...shallowRooms]
             };
         case DELETE_ROOM_FAILURE:
+            console.log('DELETE_ROOM_FAILURE', state.rooms);
             return {
                 ...state,
                 loading: false,

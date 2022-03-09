@@ -4,6 +4,7 @@ import {faTrash, faPencilAlt} from '@fortawesome/free-solid-svg-icons'
 import {useDispatch, useSelector} from "react-redux";
 import {addRoom, deleteRoom, editRoom} from "../store/actions/roomsAction";
 import './Rooms.css';
+import Modal from "./Modal";
 
 const RoomsContext = createContext({});
 
@@ -12,7 +13,7 @@ function sortByKey(array, key) {
     console.log('1', array[1][key]);
     const direction = array[0][key] < array[1][key] ? 1 : -1;
     console.log('direction', direction)
-    return array.sort(function(a, b) {
+    return array.sort(function (a, b) {
         const x = a[key];
         const y = b[key];
         return ((x < y) ? direction : ((x > y) ? direction * -1 : 0));
@@ -25,31 +26,32 @@ export default function Rooms() {
     const [room, setRoom] = useState({roomNumber: 0, roomType: 'Common', price: 0})
     const [displayRooms, setDisplayRooms] = useState([]);
 
+    const [modalActive, setModalActive] = useState(false);
+
     useEffect(() => {
-        console.log('rooms', rooms);
         setRoom({roomNumber: 0, roomType: 'Common', price: 0});
         setDisplayRooms([...rooms]);
-    }, [rooms])
+    }, [rooms]);
+
+    const sortRooms = useCallback((key) => {
+        setDisplayRooms([...sortByKey(displayRooms, key)]);
+    }, [displayRooms]);
+
     return (
         <div className="Rooms">
-            <RoomsContext.Provider value={{room, setRoom}}>
-                <RoomForm/>
+            <RoomsContext.Provider value={{room, setRoom, setModalActive}}>
+                <button onClick={() => setModalActive(true)}>Add room</button>
+                <Modal active={modalActive} setActive={setModalActive} header='Room form'>
+                    <RoomForm/>
+                </Modal>
                 <table>
                     <thead>
                     <tr>
-                        <th onClick={() => {
-                            setDisplayRooms([...sortByKey(displayRooms, 'roomNumber')]);
-                        }}>Room number
+                        <th onClick={() => sortRooms('roomNumber')}>Room number
                         </th>
-                        <th onClick={() => {
-                            setDisplayRooms([...sortByKey(displayRooms, 'roomType')]);
-                        }}>Room type</th>
-                        <th onClick={() => {
-                            setDisplayRooms([...sortByKey(displayRooms, 'roomStatus')]);
-                        }}>Room status</th>
-                        <th onClick={() => {
-                            setDisplayRooms([...sortByKey(displayRooms, 'price')]);
-                        }}>Room price</th>
+                        <th onClick={() => sortRooms('roomType')}>Room type</th>
+                        <th onClick={() => sortRooms('roomStatus')}>Room status</th>
+                        <th onClick={() => sortRooms('price')}>Room price</th>
                         <th>Edit</th>
                         <th>Delete</th>
                     </tr>
@@ -67,7 +69,7 @@ export default function Rooms() {
 
 
 function RoomForm() {
-    const {room, setRoom} = useContext(RoomsContext);
+    const {room, setRoom, setModalActive} = useContext(RoomsContext);
     const dispatch = useDispatch();
 
     const submitForm = useCallback(async (e) => {
@@ -78,7 +80,8 @@ function RoomForm() {
             dispatch(addRoom(room));
         }
         setRoom({roomNumber: 0, roomType: 'Common', price: 0});
-    }, [room, setRoom, dispatch]);
+        setModalActive(false);
+    }, [room, setRoom, dispatch, setModalActive]);
 
     return (<form className="RoomForm" onSubmit={submitForm}>
         <input placeholder="Room number" type="text" value={room.roomNumber}
@@ -105,7 +108,7 @@ function RoomForm() {
 }
 
 function RoomTr({item}) {
-    const {setRoom} = useContext(RoomsContext);
+    const {setRoom, setModalActive} = useContext(RoomsContext);
     const dispatch = useDispatch();
 
     const deleteRoomClick = useCallback((e) => {
@@ -118,10 +121,11 @@ function RoomTr({item}) {
         <td>{item.roomStatus ? 'Busy' : 'Free'}</td>
         <td>{item.price}</td>
         <td><FontAwesomeIcon icon={faPencilAlt} onClick={() => {
-            setRoom({...item})
+            setRoom({...item});
+            setModalActive(true);
         }}/></td>
         <td><FontAwesomeIcon icon={faTrash} onClick={() => {
-            deleteRoomClick({...item})
+            deleteRoomClick({...item});
         }}/></td>
     </tr>);
 }
