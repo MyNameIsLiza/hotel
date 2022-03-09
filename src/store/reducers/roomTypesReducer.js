@@ -1,98 +1,98 @@
 import {
-    ADD_ROOM_SUCCESS,
-    ADD_ROOM_FAILURE,
-    ADD_ROOM_STARTED,
-    EDIT_ROOM_SUCCESS,
-    EDIT_ROOM_FAILURE,
-    EDIT_ROOM_STARTED,
-    GET_ROOMS_FAILURE,
-    GET_ROOMS_STARTED,
-    GET_ROOMS_SUCCESS,
-    DELETE_ROOM_STARTED,
-    DELETE_ROOM_SUCCESS,
-    DELETE_ROOM_FAILURE
+    ADD_ROOM_TYPE_SUCCESS,
+    ADD_ROOM_TYPE_FAILURE,
+    ADD_ROOM_TYPE_STARTED,
+    EDIT_ROOM_TYPE_SUCCESS,
+    EDIT_ROOM_TYPE_FAILURE,
+    EDIT_ROOM_TYPE_STARTED,
+    GET_ROOM_TYPES_FAILURE,
+    GET_ROOM_TYPES_STARTED,
+    GET_ROOM_TYPES_SUCCESS,
+    DELETE_ROOM_TYPE_STARTED,
+    DELETE_ROOM_TYPE_SUCCESS,
+    DELETE_ROOM_TYPE_FAILURE
 } from '../actions/types';
 
 const initialState = {
     loading: false,
-    rooms: [],
+    roomTypes: [],
     error: null
 };
 
-export default function roomsReducer(state = initialState, action) {
-    const shallowRooms = [...state.rooms];
+export default function roomTypesReducer(state = initialState, action) {
+    const shallowRoomTypes = [...state.roomTypes];
     switch (action.type) {
-        case GET_ROOMS_STARTED:
+        case GET_ROOM_TYPES_STARTED:
             return {
                 ...state,
                 loading: true
             };
-        case GET_ROOMS_SUCCESS:
+        case GET_ROOM_TYPES_SUCCESS:
             return {
                 ...state,
                 loading: false,
                 error: null,
-                rooms: [...action.payload]
+                roomTypes: [...action.payload]
             };
-        case GET_ROOMS_FAILURE:
+        case GET_ROOM_TYPES_FAILURE:
             return {
                 ...state,
                 loading: false,
                 error: action.payload.error
             };
-        case ADD_ROOM_STARTED:
+        case ADD_ROOM_TYPE_STARTED:
             return {
                 ...state,
                 loading: true
             };
-        case ADD_ROOM_SUCCESS:
+        case ADD_ROOM_TYPE_SUCCESS:
             return {
                 ...state,
                 loading: false,
                 error: null,
-                rooms: [...state.rooms, action.payload]
+                roomTypes: [...state.roomTypes, action.payload]
             };
-        case ADD_ROOM_FAILURE:
+        case ADD_ROOM_TYPE_FAILURE:
             return {
                 ...state,
                 loading: false,
                 error: action.payload.error
             };
-        case EDIT_ROOM_STARTED:
+        case EDIT_ROOM_TYPE_STARTED:
             return {
                 ...state,
                 loading: true
             };
-        case EDIT_ROOM_SUCCESS:
-            const index = state.rooms.findIndex((el) => el._id === action.payload._id);
-            shallowRooms[index] = {...shallowRooms[index], ...action.payload};
+        case EDIT_ROOM_TYPE_SUCCESS:
+            const index = state.roomTypes.findIndex((el) => el._id === action.payload._id);
+            shallowRoomTypes[index] = {...shallowRoomTypes[index], ...action.payload};
             return {
                 ...state,
                 loading: false,
                 error: null,
-                rooms: [...shallowRooms]
+                roomTypes: [...shallowRoomTypes]
             };
-        case EDIT_ROOM_FAILURE:
+        case EDIT_ROOM_TYPE_FAILURE:
             return {
                 ...state,
                 loading: false,
                 error: action.payload.error
             };
-        case DELETE_ROOM_STARTED:
+        case DELETE_ROOM_TYPE_STARTED:
             return {
                 ...state,
                 loading: true
             };
-        case DELETE_ROOM_SUCCESS:
-            const index2 = state.rooms.findIndex((el) => el.id === action.payload.id);
-            shallowRooms.splice(index2, 1);
+        case DELETE_ROOM_TYPE_SUCCESS:
+            const index2 = state.roomTypes.findIndex((el) => el.id === action.payload.id);
+            shallowRoomTypes.splice(index2, 1);
             return {
                 ...state,
                 loading: false,
                 error: null,
-                rooms: [...shallowRooms]
+                roomTypes: [...shallowRoomTypes]
             };
-        case DELETE_ROOM_FAILURE:
+        case DELETE_ROOM_TYPE_FAILURE:
             return {
                 ...state,
                 loading: false,
