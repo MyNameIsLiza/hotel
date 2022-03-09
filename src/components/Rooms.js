@@ -9,17 +9,13 @@ import Modal from "./Modal";
 const RoomsContext = createContext({});
 
 function sortByKey(array, key) {
-    console.log('0', array[0][key]);
-    console.log('1', array[1][key]);
     const direction = array[0][key] < array[1][key] ? 1 : -1;
-    console.log('direction', direction)
     return array.sort(function (a, b) {
         const x = a[key];
         const y = b[key];
         return ((x < y) ? direction : ((x > y) ? direction * -1 : 0));
     });
 }
-
 
 export default function Rooms() {
     const rooms = useSelector((store) => store.roomsReducer.rooms);
@@ -29,7 +25,7 @@ export default function Rooms() {
     const [modalActive, setModalActive] = useState(false);
 
     useEffect(() => {
-        setRoom({roomNumber: 0, roomType: 'Common', price: 0});
+
         setDisplayRooms([...rooms]);
     }, [rooms]);
 
@@ -40,7 +36,10 @@ export default function Rooms() {
     return (
         <div className="Rooms">
             <RoomsContext.Provider value={{room, setRoom, setModalActive}}>
-                <button onClick={() => setModalActive(true)}>Add room</button>
+                <button onClick={() => {
+                    setRoom({roomNumber: 0, roomType: 'Common', price: 0});
+                    setModalActive(true);
+                }}>Add room</button>
                 <Modal active={modalActive} setActive={setModalActive} header='Room form'>
                     <RoomForm/>
                 </Modal>
@@ -79,24 +78,25 @@ function RoomForm() {
         } else {
             dispatch(addRoom(room));
         }
-        setRoom({roomNumber: 0, roomType: 'Common', price: 0});
+        setRoom({roomNumber: 0, roomType: 0, price: 0});
         setModalActive(false);
     }, [room, setRoom, dispatch, setModalActive]);
 
     return (<form className="RoomForm" onSubmit={submitForm}>
-        <input placeholder="Room number" type="text" value={room.roomNumber}
+        <input placeholder="Room number" type="text" value={room.roomNumber?room.roomNumber:''}
                onChange={(e) => {
                    setRoom({...room, roomNumber: e.target.value})
                }}/>
         <select value={room.roomType} onChange={(e) => {
             setRoom({...room, roomType: e.target.value})
         }}>
+            <option key='roomType' value='roomType' disabled>Room type</option>
             <option key='Common' value='Common'>Common</option>
             <option key='Luxury' value='Luxury'>Luxury</option>
             <option key='President' value='President'>President</option>
             <option key='Economy' value='Economy'>Economy</option>
         </select>
-        <input placeholder="Room price" type="number" value={room.price}
+        <input placeholder="Room price" type="number"  value={room.price?room.price:''}
                onChange={(e) => {
                    setRoom({...room, price: e.target.value})
                }}/>
