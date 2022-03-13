@@ -22,11 +22,16 @@
     border-radius: 20px;
     background-color: white;
     border: 1px solid gray;
+    width: 25%;
 }
 
-.Modal-content-header{
+.Modal-content-header {
     display: flex;
     justify-content: flex-end;
+    width: 100%;
+}
+
+.Modal-content-space {
     width: 100%;
 }
 
@@ -36,7 +41,7 @@
     background-color: white;
 }
 
-.Modal-header{
+.Modal-header {
     width: 100%;
     margin: 15px 0 0 5px;
 }
