@@ -84,7 +84,7 @@ export default function roomsReducer(state = initialState, action) {
                 loading: true
             };
         case DELETE_ROOM_SUCCESS:
-            const index2 = state.rooms.findIndex((el) => el.id === action.payload.id);
+            const index2 = state.rooms.findIndex((el) => el._id === action.payload._id);
             shallowRooms.splice(index2, 1);
             return {
                 ...state,
