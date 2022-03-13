@@ -4,7 +4,7 @@
     align-items: center;
 }
 
-.RoomForm{
+.RoomForm {
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -12,14 +12,19 @@
     padding: 20px;
 }
 
-.RoomForm *{
+.RoomForm input, .RoomForm select {
     padding: 5px;
     margin: 5px;
+}
+
+.RoomForm img {
+    width: 100%;
 }
 
 table {
     border-collapse: collapse;
     margin-top: 10px;
+    width: 70%;
 }
 
 th, td {
@@ -29,4 +34,16 @@ th, td {
 
 tr {
     border: 1pt solid black;
+}
+
+.image-td {
+    width: 40%
+}
+
+tr img {
+    width: 100%
+}
+
+.display_none {
+    display: none;
 }

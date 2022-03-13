@@ -5946,6 +5946,11 @@ mkdirp@^0.5.5, mkdirp@~0.5.1:
   dependencies:
     minimist "^1.2.5"
 
+mongo-image-converter@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/mongo-image-converter/-/mongo-image-converter-1.0.2.tgz#a64e0132f5f992feead0c25a9d2926f47b583c66"
+  integrity sha512-2A2fk0l0UTvdG5gcXowpDn5BDwP2c/GRU6o+ZhU1cdLddd/bdB8pSNQ+Zezb9aToX6Z3HAGD1TrPFJdbagOwEg==
+
 ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"

@@ -1,10 +1,11 @@
-import {createContext, useCallback, useContext, useEffect, useState} from "react";
+import {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTrash, faPencilAlt} from '@fortawesome/free-solid-svg-icons'
 import {useDispatch, useSelector} from "react-redux";
 import {addRoom, deleteRoom, editRoom} from "../store/actions/roomsAction";
 import './Rooms.css';
 import Modal from "./Modal";
+import defaultImage from '../images/defaultImage.png'
 
 const RoomsContext = createContext({});
 
@@ -20,7 +21,11 @@ function sortByKey(array, key) {
 export default function Rooms() {
     const rooms = useSelector((store) => store.roomsReducer.rooms);
     const roomTypes = useSelector((store) => store.roomTypesReducer.roomTypes);
-    const [room, setRoom] = useState({roomNumber: 0, roomTypeId: roomTypes[0]?._id})
+    const [room, setRoom] = useState({
+        roomNumber: 0,
+        roomTypeId: roomTypes[0]?._id,
+        image: defaultImage
+    })
     const [displayRooms, setDisplayRooms] = useState([]);
 
 
@@ -28,8 +33,8 @@ export default function Rooms() {
 
     useEffect(() => {
         console.log('roomTypes', roomTypes);
-        setDisplayRooms([...rooms.map(el=>{
-            const roomType = roomTypes.find(item=>item._id===el.roomTypeId);
+        setDisplayRooms([...rooms.map(el => {
+            const roomType = roomTypes.find(item => item._id === el.roomTypeId);
             el.price = roomType.price;
             el.roomType = roomType.title;
             return el;
@@ -44,7 +49,11 @@ export default function Rooms() {
         <div className="Rooms">
             <RoomsContext.Provider value={{room, setRoom, setModalActive}}>
                 <button onClick={() => {
-                    setRoom({roomNumber: 0, roomTypeId: roomTypes[0]?._id});
+                    setRoom({
+                        roomNumber: 0,
+                        roomTypeId: roomTypes[0]?._id,
+                        image: defaultImage
+                    });
                     setModalActive(true);
                 }}>Add room
                 </button>
@@ -57,8 +66,8 @@ export default function Rooms() {
                         <th onClick={() => sortRooms('roomNumber')}>Room number
                         </th>
                         <th onClick={() => sortRooms('roomType')}>Room type</th>
-                        <th onClick={() => sortRooms('roomStatus')}>Room status</th>
                         <th onClick={() => sortRooms('price')}>Room price</th>
+                        <th>Room image</th>
                         <th>Edit</th>
                         <th>Delete</th>
                     </tr>
@@ -79,6 +88,8 @@ export default function Rooms() {
 function RoomForm() {
     const roomTypes = useSelector((store) => store.roomTypesReducer.roomTypes);
     const {room, setRoom, setModalActive} = useContext(RoomsContext);
+    const addImageInput = useRef();
+
     const dispatch = useDispatch();
 
     const submitForm = useCallback(async (e) => {
@@ -88,7 +99,11 @@ function RoomForm() {
         } else {
             dispatch(addRoom(room));
         }
-        setRoom({roomNumber: 0, roomTypeId: roomTypes[0]?._id});
+        setRoom({
+            roomNumber: 0,
+            roomTypeId: roomTypes[0]?._id,
+            image: defaultImage
+        });
         setModalActive(false);
     }, [room, setRoom, dispatch, setModalActive, roomTypes]);
 
@@ -103,14 +118,40 @@ function RoomForm() {
             <option key='roomType' value='roomType' disabled>Room type</option>
             {roomTypes.map((el) => <option key={el._id} value={el._id}>{el.title}</option>)}
         </select>
+        <input ref={addImageInput} onChange={(e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+
+            reader.onloadend = function () {
+                setRoom({...room, image: reader.result})
+            }
+            if (file) {
+                console.log(file);
+                reader.readAsDataURL(file);
+                console.log(file);
+            } else {
+                setRoom({
+                    ...room,
+                    image: defaultImage
+                })
+            }
+        }
+
+        } className='display_none' type="file" accept=".jpg, .jpeg, .png"/>
+        <input onClick={() => addImageInput.current.click()} type="button" value='Add image'/>
+        <img src={room.image} alt="room"/>
         <input type="submit" value={room._id ? 'Edit' : 'Add'}/>
         <input type="reset" value='Reset' onClick={() => {
-            setRoom({roomNumber: 0, roomTypeId: roomTypes[0]?._id});
+            setRoom({
+                roomNumber: 0,
+                roomTypeId: roomTypes[0]?._id,
+                image: defaultImage
+            });
         }}/>
     </form>);
 }
 
-function RoomTr({item, roomType}) {
+function RoomTr({item}) {
     const {setRoom, setModalActive} = useContext(RoomsContext);
     const dispatch = useDispatch();
 
@@ -121,8 +162,8 @@ function RoomTr({item, roomType}) {
     return (<tr>
         <td>{item.roomNumber}</td>
         <td>{item.roomType}</td>
-        <td>{item.roomStatus ? 'Busy' : 'Free'}</td>
         <td>{item.price}</td>
+        <td className='image-td'><img src={item.image} alt="room"/></td>
         <td><FontAwesomeIcon icon={faPencilAlt} onClick={() => {
             setRoom({...item});
             setModalActive(true);
