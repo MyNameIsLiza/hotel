@@ -2,6 +2,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 20px;
+}
+
+.RoomsList {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
 }
 
 .RoomForm {
@@ -10,15 +19,47 @@
     align-items: stretch;
     height: fit-content;
     padding: 20px;
+    gap: 15px;
 }
 
 .RoomForm input, .RoomForm select {
     padding: 5px;
-    margin: 5px;
 }
 
 .RoomForm img {
     width: 100%;
+    border-radius: 15px;
+}
+
+.RoomForm textarea {
+    max-width: 100%;
+    max-height: 200px;
+}
+
+.Room {
+    display: flex;
+    width: 40%;
+    border: 0;
+    border-bottom: 1px solid #ececec;
+    padding: 15px;
+    font-size: 1.2em;
+}
+
+.Room-icons svg {
+    margin: 0 10px;
+}
+
+.Room > * {
+    flex: 1;
+}
+
+.Room img {
+    width: 100%;
+    border-radius: 15px;
+}
+
+.bold {
+    font-weight: bold;
 }
 
 table {
@@ -34,14 +75,6 @@ th, td {
 
 tr {
     border: 1pt solid black;
-}
-
-.image-td {
-    width: 40%
-}
-
-tr img {
-    width: 100%
 }
 
 .display_none {

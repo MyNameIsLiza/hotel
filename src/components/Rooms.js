@@ -5,9 +5,15 @@ import {useDispatch, useSelector} from "react-redux";
 import {addRoom, deleteRoom, editRoom} from "../store/actions/roomsAction";
 import './Rooms.css';
 import Modal from "./Modal";
-import defaultImage from '../images/defaultImage.png'
+import defaultImage from '../images/defaultImage.png';
+import Loader from 'react-loader';
 
 const RoomsContext = createContext({});
+const defaultRoom = {
+    roomNumber: 0,
+    image: defaultImage,
+    description: ''
+};
 
 function sortByKey(array, key) {
     const direction = array[0][key] < array[1][key] ? 1 : -1;
@@ -19,12 +25,12 @@ function sortByKey(array, key) {
 }
 
 export default function Rooms() {
+    const loading = useSelector((store) => store.roomsReducer.loading);
     const rooms = useSelector((store) => store.roomsReducer.rooms);
     const roomTypes = useSelector((store) => store.roomTypesReducer.roomTypes);
     const [room, setRoom] = useState({
-        roomNumber: 0,
+        ...defaultRoom,
         roomTypeId: roomTypes[0]?._id,
-        image: defaultImage
     })
     const [displayRooms, setDisplayRooms] = useState([]);
 
@@ -45,42 +51,29 @@ export default function Rooms() {
         setDisplayRooms([...sortByKey(displayRooms, key)]);
     }, [displayRooms]);
 
-    return (
-        <div className="Rooms">
-            <RoomsContext.Provider value={{room, setRoom, setModalActive}}>
-                <button onClick={() => {
-                    setRoom({
-                        roomNumber: 0,
-                        roomTypeId: roomTypes[0]?._id,
-                        image: defaultImage
-                    });
-                    setModalActive(true);
-                }}>Add room
-                </button>
-                <Modal active={modalActive} setActive={setModalActive} header='Room form'>
-                    <RoomForm/>
-                </Modal>
-                <table>
-                    <thead>
-                    <tr>
-                        <th onClick={() => sortRooms('roomNumber')}>Room number
-                        </th>
-                        <th onClick={() => sortRooms('roomType')}>Room type</th>
-                        <th onClick={() => sortRooms('price')}>Room price</th>
-                        <th>Room image</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {displayRooms.map((item, index) => <RoomTr key={item._id} {...{
-                        item
-                    }}
-                    />)}
-                    </tbody>
-                </table>
-            </RoomsContext.Provider>
-        </div>
+    return (<Loader loaded={!loading}>
+            <div className="Rooms">
+                <RoomsContext.Provider value={{room, setRoom, setModalActive}}>
+                    <button onClick={() => {
+                        setRoom({
+                            ...defaultRoom,
+                            roomTypeId: roomTypes[0]?._id,
+                        });
+                        setModalActive(true);
+                    }}>Add room
+                    </button>
+                    <Modal active={modalActive} setActive={setModalActive} header='Room form'>
+                        <RoomForm/>
+                    </Modal>
+                    <div className="RoomsList">
+                        {displayRooms.map((item, index) => <Room key={item._id} {...{
+                            item
+                        }}
+                        />)}
+                    </div>
+                </RoomsContext.Provider>
+            </div>
+        </Loader>
     );
 }
 
@@ -100,9 +93,8 @@ function RoomForm() {
             dispatch(addRoom(room));
         }
         setRoom({
-            roomNumber: 0,
+            ...defaultRoom,
             roomTypeId: roomTypes[0]?._id,
-            image: defaultImage
         });
         setModalActive(false);
     }, [room, setRoom, dispatch, setModalActive, roomTypes]);
@@ -126,9 +118,7 @@ function RoomForm() {
                 setRoom({...room, image: reader.result})
             }
             if (file) {
-                console.log(file);
                 reader.readAsDataURL(file);
-                console.log(file);
             } else {
                 setRoom({
                     ...room,
@@ -140,18 +130,21 @@ function RoomForm() {
         } className='display_none' type="file" accept=".jpg, .jpeg, .png"/>
         <input onClick={() => addImageInput.current.click()} type="button" value='Add image'/>
         <img src={room.image} alt="room"/>
+        <textarea onChange={(e) => {
+            setRoom({...room, description: e.target.value})
+        }} placeholder='Description' value={room.description ?? ''}
+        />
         <input type="submit" value={room._id ? 'Edit' : 'Add'}/>
         <input type="reset" value='Reset' onClick={() => {
             setRoom({
-                roomNumber: 0,
+                ...defaultRoom,
                 roomTypeId: roomTypes[0]?._id,
-                image: defaultImage
             });
         }}/>
     </form>);
 }
 
-function RoomTr({item}) {
+function Room({item}) {
     const {setRoom, setModalActive} = useContext(RoomsContext);
     const dispatch = useDispatch();
 
@@ -159,17 +152,24 @@ function RoomTr({item}) {
         dispatch(deleteRoom(e._id));
     }, [dispatch])
 
-    return (<tr>
-        <td>{item.roomNumber}</td>
-        <td>{item.roomType}</td>
-        <td>{item.price}</td>
-        <td className='image-td'><img src={item.image} alt="room"/></td>
-        <td><FontAwesomeIcon icon={faPencilAlt} onClick={() => {
-            setRoom({...item});
-            setModalActive(true);
-        }}/></td>
-        <td><FontAwesomeIcon icon={faTrash} onClick={() => {
-            deleteRoomClick({...item});
-        }}/></td>
-    </tr>);
+    return (<div className='Room' key={item._id}>
+        <div>
+            <span>#{item.roomNumber}</span>
+            <p><span className='bold'>Type: </span>{item.roomType}</p>
+            <p><span className='bold'>Price: </span>{item.price}</p>
+            {item.description ? <p><span className='bold'>Description: </span>{item.description}</p> : ''}
+            <div className='Room-icons'>
+                <FontAwesomeIcon icon={faPencilAlt} onClick={() => {
+                    setRoom({...item});
+                    setModalActive(true);
+                }}/>
+                <FontAwesomeIcon icon={faTrash} onClick={() => {
+                    deleteRoomClick({...item});
+                }}/>
+            </div>
+        </div>
+        <div>
+            <img src={item.image} alt="room"/>
+        </div>
+    </div>);
 }
