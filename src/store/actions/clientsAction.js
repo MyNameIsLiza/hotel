@@ -10,7 +10,12 @@ import {
     GET_CLIENTS_FAILURE,
     DELETE_CLIENT_SUCCESS,
     DELETE_CLIENT_STARTED,
-    DELETE_CLIENT_FAILURE
+    DELETE_CLIENT_FAILURE,
+    LOGIN_CLIENT_STARTED,
+    LOGIN_CLIENT_SUCCESS,
+    LOGIN_CLIENT_FAILURE,
+    LOGOUT_CLIENT_FAILURE,
+    LOGOUT_CLIENT_STARTED, LOGOUT_CLIENT_SUCCESS
 } from './types';
 
 import axios from 'axios';
@@ -27,6 +32,32 @@ export const addClient = (client) => {
             .catch(err => {
                 dispatch(addClientFailure(err.message));
             });
+    };
+};
+
+export const loginClient = (client) => {
+    console.log('loginClient')
+    return dispatch => {
+        dispatch(loginClientStarted());
+        axios.post(`${uri}/login`, client)
+            .then(res => {
+                dispatch(loginClientSuccess(res.data.result));
+            })
+            .catch(err => {
+                dispatch(loginClientFailure(err.message));
+            });
+    };
+};
+
+export const logoutClient = () => {
+    console.log('logoutClient')
+    return dispatch => {
+        dispatch(logoutClientStarted());
+        try{
+            dispatch(logoutClientSuccess(null));
+        }catch(err){
+            dispatch(logoutClientFailure(err.message));
+        }
     };
 };
 
@@ -82,6 +113,42 @@ const addClientStarted = () => ({
 
 const addClientFailure = error => ({
     type: ADD_CLIENT_FAILURE,
+    payload: {
+        error
+    }
+});
+
+const loginClientSuccess = client => ({
+    type: LOGIN_CLIENT_SUCCESS,
+    payload: {
+        ...client
+    }
+});
+
+const loginClientStarted = () => ({
+    type: LOGIN_CLIENT_STARTED
+});
+
+const loginClientFailure = error => ({
+    type: LOGIN_CLIENT_FAILURE,
+    payload: {
+        error
+    }
+});
+
+const logoutClientSuccess = client => ({
+    type: LOGOUT_CLIENT_SUCCESS,
+    payload: {
+        ...client
+    }
+});
+
+const logoutClientStarted = () => ({
+    type: LOGOUT_CLIENT_STARTED
+});
+
+const logoutClientFailure = error => ({
+    type: LOGOUT_CLIENT_FAILURE,
     payload: {
         error
     }

@@ -34,7 +34,6 @@ export default function Rooms() {
     })
     const [displayRooms, setDisplayRooms] = useState([]);
 
-
     const [modalActive, setModalActive] = useState(false);
 
     useEffect(() => {

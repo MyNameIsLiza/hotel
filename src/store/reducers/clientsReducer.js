@@ -10,16 +10,23 @@ import {
     GET_CLIENTS_SUCCESS,
     DELETE_CLIENT_STARTED,
     DELETE_CLIENT_SUCCESS,
-    DELETE_CLIENT_FAILURE
+    DELETE_CLIENT_FAILURE,
+    LOGIN_CLIENT_SUCCESS,
+    LOGIN_CLIENT_STARTED,
+    LOGIN_CLIENT_FAILURE,
+    LOGOUT_CLIENT_STARTED,
+    LOGOUT_CLIENT_SUCCESS, LOGOUT_CLIENT_FAILURE
 } from '../actions/types';
 
 const initialState = {
     loading: false,
     clients: [],
-    error: null
+    error: null,
+    user:JSON.parse(sessionStorage.getItem('user')),
 };
 
 export default function clientsReducer(state = initialState, action) {
+    console.log(action.type)
     switch (action.type) {
         case GET_CLIENTS_STARTED:
             return {
@@ -45,13 +52,53 @@ export default function clientsReducer(state = initialState, action) {
                 loading: true
             };
         case ADD_CLIENT_SUCCESS:
+            sessionStorage.setItem('user', JSON.stringify(action.payload));
             return {
                 ...state,
                 loading: false,
                 error: null,
-                clients: [...state.clients, action.payload]
+                clients: [...state.clients, action.payload],
+                user: action.payload
             };
         case ADD_CLIENT_FAILURE:
+            return {
+                ...state,
+                loading: false,
+                error: action.payload.error
+            };
+        case LOGIN_CLIENT_STARTED:
+            return {
+                ...state,
+                loading: true
+            };
+        case LOGIN_CLIENT_SUCCESS:
+            sessionStorage.setItem('user', JSON.stringify(action.payload));
+            return {
+                ...state,
+                loading: false,
+                error: null,
+                user: action.payload
+            };
+        case LOGIN_CLIENT_FAILURE:
+            return {
+                ...state,
+                loading: false,
+                error: action.payload.error
+            };
+        case LOGOUT_CLIENT_STARTED:
+            return {
+                ...state,
+                loading: true
+            };
+        case LOGOUT_CLIENT_SUCCESS:
+            sessionStorage.removeItem('user');
+            return {
+                ...state,
+                loading: false,
+                error: null,
+                user: {}
+            };
+        case LOGOUT_CLIENT_FAILURE:
             return {
                 ...state,
                 loading: false,
