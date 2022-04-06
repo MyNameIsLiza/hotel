@@ -1,14 +1,11 @@
 //import './Form.css';
-
 import {useCallback} from "react";
-import {loginClient} from "../store/actions/clientsAction";
 
 export default function Form({scheme, data, setData, submitCallback}) {
     const submitForm = useCallback(async (e) => {
         e.preventDefault();
-        console.log('data', data);
         submitCallback(data);
-    }, [data]);
+    }, [data, submitCallback]);
 
     return (
         <form className="Form" onSubmit={submitForm}>

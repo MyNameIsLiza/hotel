@@ -1,11 +1,11 @@
 //import './Register.css';
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {addClient, getClients} from "../store/actions/clientsAction";
+import {addClient} from "../store/actions/clientsAction";
 import {useNavigate} from "react-router-dom";
 import Form from "./Form";
 
-export default function RegisterForm() {
+export default function Register() {
     const userScheme = useMemo(() => {
         return {
             email: {placeholder: 'Email', type: 'email'},
@@ -32,7 +32,9 @@ export default function RegisterForm() {
     }, [rootUser, navigate]);
 
     return (
-        <Form scheme={userScheme} data={user} setData={setUser} submitCallback={submitCallback}/>
-    );
+        <>
+            <h2>Register</h2>
+            <Form scheme={userScheme} data={user} setData={setUser} submitCallback={submitCallback}/>
+        </>);
 }
 

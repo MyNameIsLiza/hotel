@@ -5,7 +5,7 @@ import {loginClient} from "../store/actions/clientsAction";
 import {useNavigate} from "react-router-dom";
 import Form from './Form';
 
-export default function LoginForm() {
+export default function Login() {
     const userScheme = useMemo(() => {
         return {
             email: {placeholder: 'Email', type: 'email'},
@@ -19,7 +19,7 @@ export default function LoginForm() {
 
     useEffect(() => {
         if (rootUser?.email) {
-            navigate("/", { replace: true });
+            navigate("/", {replace: true});
         }
     }, [rootUser, navigate]);
 
@@ -28,7 +28,9 @@ export default function LoginForm() {
     }, [dispatch]);
 
     return (
-        <Form scheme={userScheme} data={user} setData={setUser} submitCallback={submitCallback}/>
-    );
+        <>
+            <h2>Login</h2>
+            <Form scheme={userScheme} data={user} setData={setUser} submitCallback={submitCallback}/>
+        </>);
 }
 

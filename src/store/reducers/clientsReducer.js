@@ -22,7 +22,15 @@ const initialState = {
     loading: false,
     clients: [],
     error: null,
-    user:JSON.parse(sessionStorage.getItem('user')),
+    user: JSON.parse(sessionStorage.getItem('user')),
+};
+
+const isAdmin = (user) => {
+    if (user.email === 'lizatsapik@gmail.com') {
+        user.permission = true;
+    } else {
+        user.permission = false;
+    }
 };
 
 export default function clientsReducer(state = initialState, action) {
@@ -52,6 +60,7 @@ export default function clientsReducer(state = initialState, action) {
                 loading: true
             };
         case ADD_CLIENT_SUCCESS:
+            isAdmin(action.payload);
             sessionStorage.setItem('user', JSON.stringify(action.payload));
             return {
                 ...state,
@@ -72,6 +81,7 @@ export default function clientsReducer(state = initialState, action) {
                 loading: true
             };
         case LOGIN_CLIENT_SUCCESS:
+            isAdmin(action.payload);
             sessionStorage.setItem('user', JSON.stringify(action.payload));
             return {
                 ...state,

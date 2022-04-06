@@ -10,12 +10,16 @@ import {
     GET_ORDERS_SUCCESS,
     DELETE_ORDER_STARTED,
     DELETE_ORDER_SUCCESS,
-    DELETE_ORDER_FAILURE
+    DELETE_ORDER_FAILURE,
+    SEARCH_ORDERS_STARTED,
+    SEARCH_ORDERS_FAILURE,
+    SEARCH_ORDERS_SUCCESS
 } from '../actions/types';
 
 const initialState = {
     loading: false,
     orders: [],
+    searchOrders: [],
     error: null
 };
 
@@ -34,6 +38,24 @@ export default function ordersReducer(state = initialState, action) {
                 orders: [...action.payload]
             };
         case GET_ORDERS_FAILURE:
+            return {
+                ...state,
+                loading: false,
+                error: action.payload.error
+            };
+        case SEARCH_ORDERS_STARTED:
+            return {
+                ...state,
+                loading: true
+            };
+        case SEARCH_ORDERS_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                error: null,
+                searchOrders: [...action.payload]
+            };
+        case SEARCH_ORDERS_FAILURE:
             return {
                 ...state,
                 loading: false,

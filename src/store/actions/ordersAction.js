@@ -10,7 +10,7 @@ import {
     GET_ORDERS_FAILURE,
     DELETE_ORDER_SUCCESS,
     DELETE_ORDER_STARTED,
-    DELETE_ORDER_FAILURE
+    DELETE_ORDER_FAILURE, SEARCH_ORDERS_SUCCESS, SEARCH_ORDERS_STARTED, SEARCH_ORDERS_FAILURE
 } from './types';
 
 import axios from 'axios';
@@ -65,6 +65,19 @@ export const getOrders = () => {
             })
             .catch(err => {
                 dispatch(getOrdersFailure(err.message));
+            });
+    };
+};
+
+export const searchOrders = (order) => {
+    return dispatch => {
+        dispatch(searchOrdersStarted());
+        axios.post(`${uri}/search`, order)
+            .then(res => {
+                dispatch(searchOrdersSuccess(res.data.result));
+            })
+            .catch(err => {
+                dispatch(searchOrdersFailure(err.message));
             });
     };
 };
@@ -136,6 +149,24 @@ const getOrdersStarted = () => ({
 
 const getOrdersFailure = error => ({
     type: GET_ORDERS_FAILURE,
+    payload: {
+        error
+    }
+});
+
+const searchOrdersSuccess = orders => ({
+    type: SEARCH_ORDERS_SUCCESS,
+    payload: [
+        ...orders
+    ]
+});
+
+const searchOrdersStarted = () => ({
+    type: SEARCH_ORDERS_STARTED
+});
+
+const searchOrdersFailure = error => ({
+    type: SEARCH_ORDERS_FAILURE,
     payload: {
         error
     }

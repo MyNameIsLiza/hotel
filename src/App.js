@@ -1,6 +1,6 @@
 import './App.css';
 import {useDispatch, useSelector} from "react-redux";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {getOrders} from "./store/actions/ordersAction";
 import {getClients, logoutClient} from "./store/actions/clientsAction";
 import {getRooms} from "./store/actions/roomsAction";
@@ -11,13 +11,13 @@ import {
     Route,
     Link
 } from "react-router-dom";
-import Rooms from "./components/Rooms";
+import Rooms from "./components/Rooms/Rooms";
 import Clients from "./components/Clients";
-import LoginForm from "./components/LoginForm";
-import RegisterForm from "./components/RegisterForm";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Home from "./components/Home";
 
 function App() {
-    const [modalActive, setModalActive] = useState(false);
     const user = useSelector((store) => store.clientsReducer.user);
     const dispatch = useDispatch();
 
@@ -31,12 +31,13 @@ function App() {
     return (
         <div className="App">
             <Router>
-                <nav>
-                    <ul>
+                <nav className="App-nav">
+                    <ul className="App-ul">
                         <li><Link to="/">Home</Link></li>
                         {user?.email ?
-                            <li><Link to="logout" onClick={()=>{
-                                dispatch(logoutClient());}
+                            <li><Link to="logout" onClick={() => {
+                                dispatch(logoutClient());
+                            }
                             }>Logout</Link></li>
                             : <>
                                 <li><Link to="/login">Login</Link></li>
@@ -45,9 +46,10 @@ function App() {
                         <li>
                             <Link to="/rooms">Rooms</Link>
                         </li>
+                        {user?.permission ?
                         <li>
                             <Link to="/clients">Clients</Link>
-                        </li>
+                        </li>:''}
                         <li>
                             <Link to="/orders">Orders</Link>
                         </li>
@@ -55,12 +57,10 @@ function App() {
                 </nav>
                 <Routes>
                     <Route path='/rooms' element={<Rooms/>}/>
-                    <Route path='/login' element={<LoginForm/>}/>
-                    <Route path='/register' element={<RegisterForm/>}/>
+                    <Route path='/login' element={<Login/>}/>
+                    <Route path='/register' element={<Register/>}/>
                     <Route path='/clients' element={<Clients/>}/>
-                    <Route path='/'>
-
-                    </Route>
+                    <Route exact path='/' element={<Home/>}/>
                 </Routes>
             </Router>
         </div>
