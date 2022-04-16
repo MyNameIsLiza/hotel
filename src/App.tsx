@@ -6,18 +6,26 @@ import {getClients, logoutClient} from "./store/actions/clientsAction";
 import {getRooms} from "./store/actions/roomsAction";
 import {getRoomTypes} from "./store/actions/roomTypesAction";
 import {
-    BrowserRouter as Router,
+    BrowserRouter,
+    HashRouter,
     Routes,
     Route,
     Link
 } from "react-router-dom";
+import { createBrowserHistory, createHashHistory } from 'history';
+import { isElectron } from './utils';
 import Rooms from "./components/Rooms/Rooms";
 import Clients from "./components/Clients";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Home from "./components/Home";
 
+export const history = isElectron()
+    ? createHashHistory()
+    : createBrowserHistory();
+
 function App() {
+    // @ts-ignore
     const user = useSelector((store) => store.clientsReducer.user);
     const dispatch = useDispatch();
 
@@ -28,9 +36,11 @@ function App() {
         dispatch(getOrders());
     }, [dispatch]);
 
+
     return (
         <div className="App">
-            <Router>
+            Hello, Liza
+            {isElectron()?<HashRouter>
                 <nav className="App-nav">
                     <ul className="App-ul">
                         <li><Link to="/">Home</Link></li>
@@ -47,9 +57,9 @@ function App() {
                             <Link to="/rooms">Rooms</Link>
                         </li>
                         {user?.permission ?
-                        <li>
-                            <Link to="/clients">Clients</Link>
-                        </li>:''}
+                            <li>
+                                <Link to="/clients">Clients</Link>
+                            </li>:''}
                         <li>
                             <Link to="/orders">Orders</Link>
                         </li>
@@ -60,9 +70,41 @@ function App() {
                     <Route path='/login' element={<Login/>}/>
                     <Route path='/register' element={<Register/>}/>
                     <Route path='/clients' element={<Clients/>}/>
-                    <Route exact path='/' element={<Home/>}/>
+                    <Route path='/' element={<Home/>}/>
                 </Routes>
-            </Router>
+            </HashRouter>:<BrowserRouter>
+                <nav className="App-nav">
+                    <ul className="App-ul">
+                        <li><Link to="/">Home</Link></li>
+                        {user?.email ?
+                            <li><Link to="logout" onClick={() => {
+                                dispatch(logoutClient());
+                            }
+                            }>Logout</Link></li>
+                            : <>
+                                <li><Link to="/login">Login</Link></li>
+                                <li><Link to="/register">Register</Link></li>
+                            </>}
+                        <li>
+                            <Link to="/rooms">Rooms</Link>
+                        </li>
+                        {user?.permission ?
+                            <li>
+                                <Link to="/clients">Clients</Link>
+                            </li>:''}
+                        <li>
+                            <Link to="/orders">Orders</Link>
+                        </li>
+                    </ul>
+                </nav>
+                <Routes>
+                    <Route path='/rooms' element={<Rooms/>}/>
+                    <Route path='/login' element={<Login/>}/>
+                    <Route path='/register' element={<Register/>}/>
+                    <Route path='/clients' element={<Clients/>}/>
+                    <Route path='/' element={<Home/>}/>
+                </Routes>
+            </BrowserRouter>}
         </div>
     );
 }
